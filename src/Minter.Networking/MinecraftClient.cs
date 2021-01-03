@@ -1,7 +1,8 @@
 using System;
 using System.IO;
-using System.Net.Sockets;
 using System.Threading;
+using Minter.Networking.Packets;
+using Minter.Networking.Packets.Handshaking;
 using Minter.Networking.Readers;
 
 namespace Minter.Networking
@@ -9,6 +10,7 @@ namespace Minter.Networking
     public class MinecraftClient : IDisposable
     {
         private readonly Stream _stream;
+        private ConnectionState _connectionState;
 
         private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly CancellationToken _cancellationToken;
@@ -20,6 +22,7 @@ namespace Minter.Networking
         public MinecraftClient(Stream stream)
         {
             _stream = stream;
+            _connectionState = ConnectionState.Handshaking;
 
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
@@ -39,8 +42,23 @@ namespace Minter.Networking
                     var packetLength = reader.ReadVarInt();
                     var packetId = reader.ReadVarInt();
 
-                    Console.WriteLine($"Length: {packetLength}");
-                    Console.WriteLine($"PacketId: {packetId}");
+                    if (packetId == 0x00 && _connectionState == ConnectionState.Handshaking)
+                    {
+                        Console.WriteLine(">> Handshaking");
+
+                        var packet = new HandshakingPacket(
+                            reader.ReadVarInt(), // protocol version
+                            reader.ReadString(), // hostname
+                            reader.ReadUInt16(), // port
+                            (ConnectionState) reader.ReadVarInt() // next connection state
+                        );
+
+                        _connectionState = packet.NextState;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Unknown packet: {packetId}");
+                    }
                 }
             }
             catch (EndOfStreamException) {}
@@ -64,7 +82,7 @@ namespace Minter.Networking
             _cancellationTokenSource.Cancel();
             _stream.Close();
         }
-        
+
         public void Dispose()
         {
             _stream.Dispose();
