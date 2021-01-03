@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Minter.Networking.Readers;
 
 namespace Minter.Networking
 {
@@ -10,7 +8,7 @@ namespace Minter.Networking
     {
         private readonly TcpListener _listener;
         private bool _listening;
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -56,29 +54,13 @@ namespace Minter.Networking
         /// <summary>
         /// Handles tcp client
         /// </summary>
-        /// <param name="client"></param>
-        private void ConnectionCallback(TcpClient client)
+        /// <param name="tcpClient"></param>
+        private void ConnectionCallback(TcpClient tcpClient)
         {
-            try
-            {
-                var stream = client.GetStream();
-                var reader = new MinecraftProtocolReader(stream);
-
-                var packetLength = reader.ReadVarInt();
-                var packetId = reader.ReadVarInt();
-
-                Console.WriteLine($"Length: {packetLength}");
-                Console.WriteLine($"PacketId: {packetId}");
-
-                client.Close();
-            }
-            catch (Exception e)
-            {
-                // TODO: error logging
-
-                Console.WriteLine(e);
-                StopListen();
-            }
+            using var stream = tcpClient.GetStream();
+            using var client = new MinecraftClient(stream);
+            
+            client.Start();
         }
     }
 }

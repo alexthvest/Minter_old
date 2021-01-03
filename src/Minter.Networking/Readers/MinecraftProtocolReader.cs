@@ -1,7 +1,6 @@
 using System;
 using System.Buffers.Binary;
 using System.IO;
-using System.Net.Mail;
 using System.Text;
 
 namespace Minter.Networking.Readers
@@ -65,6 +64,19 @@ namespace Minter.Networking.Readers
                 : value;
         }
 
+        /// <summary>
+        /// Reads long value
+        /// </summary>
+        /// <returns></returns>
+        public override long ReadInt64()
+        {
+            var value = base.ReadInt16();
+            
+            return BitConverter.IsLittleEndian
+                ? BinaryPrimitives.ReverseEndianness(value)
+                : value;
+        }
+        
         /// <summary>
         /// Reads VarInt
         /// </summary>
