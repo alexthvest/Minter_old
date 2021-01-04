@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 using System.IO;
 using System.Text;
 
-namespace Minter.Networking.Readers
+namespace Minter.Networking.Protocol
 {
     public class MinecraftProtocolReader : BinaryReader
     {

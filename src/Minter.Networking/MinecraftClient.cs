@@ -3,14 +3,18 @@ using System.IO;
 using System.Threading;
 using Minter.Networking.Packets;
 using Minter.Networking.Packets.Handshaking;
-using Minter.Networking.Readers;
+using Minter.Networking.Packets.Registry;
+using Minter.Networking.Protocol;
 
 namespace Minter.Networking
 {
     public class MinecraftClient : IDisposable
     {
+        public ConnectionState ConnectionState { get; set; }
+        
         private readonly Stream _stream;
-        private ConnectionState _connectionState;
+        
+        private readonly IConnectionStateRegistry _connectionStateRegistry;
 
         private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly CancellationToken _cancellationToken;
@@ -19,10 +23,13 @@ namespace Minter.Networking
         /// 
         /// </summary>
         /// <param name="stream"></param>
-        public MinecraftClient(Stream stream)
+        /// <param name="connectionStateRegistry"></param>
+        public MinecraftClient(Stream stream, IConnectionStateRegistry connectionStateRegistry)
         {
             _stream = stream;
-            _connectionState = ConnectionState.Handshaking;
+
+            ConnectionState = ConnectionState.Handshaking;
+            _connectionStateRegistry = connectionStateRegistry;
 
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
@@ -42,27 +49,16 @@ namespace Minter.Networking
                     var packetLength = reader.ReadVarInt();
                     var packetId = reader.ReadVarInt();
 
-                    if (packetId == 0x00 && _connectionState == ConnectionState.Handshaking)
-                    {
-                        Console.WriteLine(">> Handshaking");
+                    var packetRegistry = _connectionStateRegistry.ResolvePackets(ConnectionState);
 
-                        var packet = new HandshakingPacket(
-                            reader.ReadVarInt(), // protocol version
-                            reader.ReadString(), // hostname
-                            reader.ReadUInt16(), // port
-                            (ConnectionState) reader.ReadVarInt() // next connection state
-                        );
-
-                        _connectionState = packet.NextState;
-                    }
-                    else
+                    if (packetRegistry is null)
                     {
-                        Console.WriteLine($"Unknown packet: {packetId}");
+                        Console.WriteLine($"Unregistered connection state: {ConnectionState}");
+                        continue;
                     }
                 }
             }
             catch (EndOfStreamException) {}
-            catch (IOException) {}
             catch (Exception e)
             {
                 // TODO: Error logging

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using Minter.Core;
 
 namespace Minter.Server
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var server = new MinecraftServer(IPAddress.Any, 25565);
 

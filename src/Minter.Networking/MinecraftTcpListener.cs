@@ -1,6 +1,9 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Minter.Networking.Packets;
+using Minter.Networking.Packets.Handshaking;
+using Minter.Networking.Packets.Registry;
 
 namespace Minter.Networking
 {
@@ -8,6 +11,8 @@ namespace Minter.Networking
     {
         private readonly TcpListener _listener;
         private bool _listening;
+
+        private readonly IConnectionStateRegistry _connectionStateRegistry;
 
         /// <summary>
         /// 
@@ -25,6 +30,32 @@ namespace Minter.Networking
         {
             _listener = new TcpListener(ipEndPoint);
             _listening = false;
+
+            _connectionStateRegistry = new ConnectionStateRegistry();
+            RegisterPackets();
+        }
+
+        /// <summary>
+        /// Registers connection states with packets
+        /// </summary>
+        private void RegisterPackets()
+        {
+            _connectionStateRegistry.RegisterConnectionState(ConnectionState.Handshaking, packetRegistry =>
+            {
+                packetRegistry.RegisterPacket<HandshakingPacket>(0x00, packet =>
+                {
+                    packet.UsePacketReader<HandshakingPacketReader>();
+                    
+                });
+            });
+            
+            _connectionStateRegistry.RegisterConnectionState(ConnectionState.Status, packetRegistry =>
+            {
+                packetRegistry.RegisterPacket<HandshakingPacket>(0x00, packet =>
+                {
+                    
+                });
+            });
         }
 
         /// <summary>
@@ -58,7 +89,7 @@ namespace Minter.Networking
         private void ConnectionCallback(TcpClient tcpClient)
         {
             using var stream = tcpClient.GetStream();
-            using var client = new MinecraftClient(stream);
+            using var client = new MinecraftClient(stream, _connectionStateRegistry);
             
             client.Start();
         }

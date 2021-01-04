@@ -2,10 +2,6 @@ namespace Minter.Networking.Packets.Handshaking
 {
     public class HandshakingPacket : IPacket
     {
-        public int Id => 0x00;
-
-        public ConnectionState ConnectionState => ConnectionState.Handshaking;
-        
         /// <summary>
         /// Contains protocol version (minecraft version)
         /// </summary>
