@@ -17,6 +17,6 @@ namespace Minter.Networking.Packets.Registry
         /// </summary>
         /// <param name="packetId"></param>
         /// <param name="configure"></param>
-        void RegisterPacket<T>(int packetId, Action<IPacketConfigure<T>> configure) where T : IPacket;
+        void RegisterPacket<T>(int packetId, Action<IPacketConfigurationBuilder<T>> configure) where T : IPacket;
     }
 }

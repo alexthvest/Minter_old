@@ -15,7 +15,7 @@ namespace Minter.Networking.Packets.Registry
         /// Registers new connection state
         /// </summary>
         /// <param name="connectionState"></param>
-        /// <param name="configure"></param>
-        void RegisterConnectionState(ConnectionState connectionState, Action<IPacketRegistry> configure);
+        /// <param name="packets"></param>
+        void RegisterConnectionState(ConnectionState connectionState, Action<IPacketRegistry> packets);
     }
 }
