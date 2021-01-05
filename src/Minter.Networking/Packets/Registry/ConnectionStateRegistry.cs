@@ -5,8 +5,8 @@ namespace Minter.Networking.Packets.Registry
 {
     public class ConnectionStateRegistry : IConnectionStateRegistry
     {
-        private readonly IDictionary<ConnectionState, IPacketRegistry> _states;
-
+        private readonly IDictionary<ConnectionState, IPacketRegistry> _packetRegistries;
+        
         /// <summary>
         /// 
         /// </summary>
@@ -16,15 +16,15 @@ namespace Minter.Networking.Packets.Registry
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="states"></param>
-        public ConnectionStateRegistry(IDictionary<ConnectionState, IPacketRegistry> states)
+        /// <param name="packetRegistries"></param>
+        public ConnectionStateRegistry(IDictionary<ConnectionState, IPacketRegistry> packetRegistries)
         {
-            _states = states;
+            _packetRegistries = packetRegistries;
         }
 
-        public IPacketRegistry? ResolvePackets(ConnectionState connectionState)
+        public IPacketRegistry? ResolvePacketRegistry(ConnectionState state)
         {
-            if (_states.TryGetValue(connectionState, out var packetRegistry))
+            if (_packetRegistries.TryGetValue(state, out var packetRegistry))
             {
                 return packetRegistry;
             }
@@ -32,13 +32,13 @@ namespace Minter.Networking.Packets.Registry
             return null;
         }
 
-        public void RegisterConnectionState(ConnectionState connectionState, Action<IPacketRegistry> configure)
+        public void RegisterConnectionState(ConnectionState state, Action<IPacketRegistry> packetRegistry)
         {
-            // var packetRegistry = new PacketRegistry();
-            //
-            // configure.Invoke(packetRegistry);
-            //
-            // _states[connectionState] = packetRegistry;
+            var registry = new PacketRegistry();
+            
+            packetRegistry.Invoke(registry);
+
+            _packetRegistries[state] = registry;
         }
     }
 }

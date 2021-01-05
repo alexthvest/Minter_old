@@ -40,22 +40,7 @@ namespace Minter.Networking
         /// </summary>
         private void RegisterPackets()
         {
-            _connectionStateRegistry.RegisterConnectionState(ConnectionState.Handshaking, packetRegistry =>
-            {
-                packetRegistry.RegisterPacket<HandshakingPacket>(0x00, packet =>
-                {
-                    packet.UsePacketReader<HandshakingPacketReader>();
-                    
-                });
-            });
             
-            _connectionStateRegistry.RegisterConnectionState(ConnectionState.Status, packetRegistry =>
-            {
-                packetRegistry.RegisterPacket<HandshakingPacket>(0x00, packet =>
-                {
-                    
-                });
-            });
         }
 
         /// <summary>

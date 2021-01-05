@@ -1,22 +1,27 @@
-using System;
-
 namespace Minter.Networking.Packets.Registry
 {
     public interface IPacketRegistry
     {
         /// <summary>
-        /// Returns packet by id and state
+        /// Gets packet by id
         /// </summary>
         /// <param name="packetId"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        T? ResolvePacket<T>(int packetId) where T : IPacket;
+        T? ResolvePacket<T>(int packetId) where T : IPacket<T>, new();
 
         /// <summary>
-        /// Registers new connection state with packets
+        /// Gets packet by id
         /// </summary>
         /// <param name="packetId"></param>
-        /// <param name="configure"></param>
-        void RegisterPacket<T>(int packetId, Action<IPacketConfigurationBuilder<T>> configure) where T : IPacket;
+        /// <returns></returns>
+        IPacket? ResolvePacket(int packetId);
+        
+        /// <summary>
+        /// Registers new packet
+        /// </summary>
+        /// <param name="packetId"></param>
+        /// <typeparam name="T"></typeparam>
+        void RegisterPacket<T>(int packetId) where T : IPacket<T>, new();
     }
 }

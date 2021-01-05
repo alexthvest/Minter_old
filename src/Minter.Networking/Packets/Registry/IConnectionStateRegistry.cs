@@ -5,17 +5,17 @@ namespace Minter.Networking.Packets.Registry
     public interface IConnectionStateRegistry
     {
         /// <summary>
-        /// Returns packet registry by connection state
+        /// Gets packet registry by connection state
         /// </summary>
-        /// <param name="connectionState"></param>
+        /// <param name="state"></param>
         /// <returns></returns>
-        IPacketRegistry? ResolvePackets(ConnectionState connectionState);
-
+        IPacketRegistry? ResolvePacketRegistry(ConnectionState state);
+        
         /// <summary>
-        /// Registers new connection state
+        /// Registers new connection state with packets
         /// </summary>
-        /// <param name="connectionState"></param>
-        /// <param name="packets"></param>
-        void RegisterConnectionState(ConnectionState connectionState, Action<IPacketRegistry> packets);
+        /// <param name="state"></param>
+        /// <param name="packetRegistry"></param>
+        void RegisterConnectionState(ConnectionState state, Action<IPacketRegistry> packetRegistry);
     }
 }

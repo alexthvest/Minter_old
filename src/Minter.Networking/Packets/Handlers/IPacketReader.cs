@@ -13,7 +13,7 @@ namespace Minter.Networking.Packets.Handlers
     }
 
     public interface IPacketReader<T> : IPacketReader
-        where T : IPacket
+        where T : IPacket<T>
     {
         /// <summary>
         /// Reads packet and returns it

@@ -11,7 +11,7 @@ namespace Minter.Networking.Packets.Handlers
     }
     
     public interface IPacketHandler<T> : IPacketHandler
-        where T : IPacket
+        where T : IPacket<T>
     {
         /// <summary>
         /// Handles packet
