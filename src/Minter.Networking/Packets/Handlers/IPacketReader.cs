@@ -4,9 +4,14 @@ namespace Minter.Networking.Packets.Handlers
 {
     public interface IPacketReader
     {
-        
+        /// <summary>
+        /// Reads packet and returns it
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        IPacket ReadPacket(MinecraftProtocolReader reader);
     }
-    
+
     public interface IPacketReader<T> : IPacketReader
         where T : IPacket
     {
@@ -15,6 +20,9 @@ namespace Minter.Networking.Packets.Handlers
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        T ReadPacket(MinecraftProtocolReader reader);
+        new T ReadPacket(MinecraftProtocolReader reader);
+
+        IPacket IPacketReader.ReadPacket(MinecraftProtocolReader reader) =>
+            ReadPacket(reader);
     }
 }
