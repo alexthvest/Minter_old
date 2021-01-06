@@ -2,8 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using Minter.Networking.Packets;
-using Minter.Networking.Packets.Handshaking;
-using Minter.Networking.Packets.Registry;
+using Minter.Networking.Registry;
 using Minter.Networking.Protocol;
 
 namespace Minter.Networking
@@ -11,10 +10,10 @@ namespace Minter.Networking
     public class MinecraftClient : IDisposable
     {
         public ConnectionState ConnectionState { get; set; }
-        
+
         private readonly Stream _stream;
-        
-        private readonly IConnectionStateRegistry _connectionStateRegistry;
+
+        private readonly IPacketRegistry _packetRegistry;
 
         private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly CancellationToken _cancellationToken;
@@ -23,13 +22,13 @@ namespace Minter.Networking
         /// 
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="connectionStateRegistry"></param>
-        public MinecraftClient(Stream stream, IConnectionStateRegistry connectionStateRegistry)
+        /// <param name="packetRegistry"></param>
+        public MinecraftClient(Stream stream, IPacketRegistry packetRegistry)
         {
             _stream = stream;
 
             ConnectionState = ConnectionState.Handshaking;
-            _connectionStateRegistry = connectionStateRegistry;
+            _packetRegistry = packetRegistry;
 
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
@@ -49,13 +48,20 @@ namespace Minter.Networking
                     var packetLength = reader.ReadVarInt();
                     var packetId = reader.ReadVarInt();
 
-                    var packetRegistry = _connectionStateRegistry.ResolvePackets(ConnectionState);
-
-                    if (packetRegistry is null)
+                    if (!_packetRegistry.TryResolvePacketReader(packetId, ConnectionState, out var packetReader))
                     {
-                        Console.WriteLine($"Unregistered connection state: {ConnectionState}");
+                        Console.WriteLine($"No reader was found for packet: {ConnectionState}:{packetId}");
                         continue;
                     }
+
+                    if (!_packetRegistry.TryResolvePacketHandler(packetId, ConnectionState, out var packetHandler))
+                    {
+                        Console.WriteLine($"No handler was found for packet: {ConnectionState}:{packetId}");
+                        continue;
+                    }
+
+                    var packet = packetReader!.ReadPacket(reader);
+                    packetHandler!.HandlePacket(this, packet);
                 }
             }
             catch (EndOfStreamException) {}

@@ -2,8 +2,8 @@
 using System.Net.Sockets;
 using System.Threading;
 using Minter.Networking.Packets;
+using Minter.Networking.Registry;
 using Minter.Networking.Packets.Handshaking;
-using Minter.Networking.Packets.Registry;
 
 namespace Minter.Networking
 {
@@ -12,7 +12,7 @@ namespace Minter.Networking
         private readonly TcpListener _listener;
         private bool _listening;
 
-        private readonly IConnectionStateRegistry _connectionStateRegistry;
+        private readonly IPacketRegistry _packetRegistry;
 
         /// <summary>
         /// 
@@ -31,7 +31,7 @@ namespace Minter.Networking
             _listener = new TcpListener(ipEndPoint);
             _listening = false;
 
-            _connectionStateRegistry = new ConnectionStateRegistry();
+            _packetRegistry = new PacketRegistry();
             RegisterPackets();
         }
 
@@ -40,7 +40,9 @@ namespace Minter.Networking
         /// </summary>
         private void RegisterPackets()
         {
-            
+            _packetRegistry.RegisterPacket<HandshakingPacket>(0x00, ConnectionState.Handshaking)
+                .UsePacketReader<HandshakingPacketReader>()
+                .UsePacketHandler<HandshakingPacketHandler>();
         }
 
         /// <summary>
@@ -74,8 +76,8 @@ namespace Minter.Networking
         private void ConnectionCallback(TcpClient tcpClient)
         {
             using var stream = tcpClient.GetStream();
-            using var client = new MinecraftClient(stream, _connectionStateRegistry);
-            
+            using var client = new MinecraftClient(stream, _packetRegistry);
+
             client.Start();
         }
     }

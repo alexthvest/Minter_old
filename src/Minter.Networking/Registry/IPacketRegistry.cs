@@ -1,34 +1,35 @@
-using System.Runtime.InteropServices;
+using Minter.Networking.Packets;
+using Minter.Networking.Packets.Handlers;
 
-namespace Minter.Networking.Packets.Registry
+namespace Minter.Networking.Registry
 {
     public interface IPacketRegistry
     {
         /// <summary>
-        /// Gets packet by id and connection state
+        /// Gets packet reader by packet type
         /// </summary>
         /// <param name="packetId"></param>
         /// <param name="state"></param>
-        /// <param name="packet"></param>
-        /// <typeparam name="T"></typeparam>
+        /// <param name="reader"></param>
         /// <returns></returns>
-        bool TryResolvePacket<T>(int packetId, ConnectionState state, out T packet) where T : IPacket;
-
+        bool TryResolvePacketReader(int packetId, ConnectionState state, out IPacketReader? reader);
+        
         /// <summary>
-        /// Gets packet by and connection state
+        /// Gets packet handler by packet type
         /// </summary>
         /// <param name="packetId"></param>
         /// <param name="state"></param>
-        /// <param name="packet"></param>
+        /// <param name="handler"></param>
         /// <returns></returns>
-        bool TryResolvePacket(int packetId, ConnectionState state, out IPacket packet);
-
+        bool TryResolvePacketHandler(int packetId, ConnectionState state, out IPacketHandler? handler);
+        
         /// <summary>
         /// Registers new packet
         /// </summary>
         /// <param name="packetId"></param>
         /// <param name="state"></param>
         /// <typeparam name="T"></typeparam>
-        void RegisterPacket<T>(int packetId, ConnectionState state) where T : IPacket;
+        /// <returns></returns>
+        IPacketBuilder<T> RegisterPacket<T>(int packetId, ConnectionState state) where T : IPacket;
     }
 }

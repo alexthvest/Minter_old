@@ -1,6 +1,4 @@
-using Minter.Networking.Packets;
-
-namespace Minter.Networking.Handlers
+namespace Minter.Networking.Packets.Handlers
 {
     public interface IPacketHandler
     {
