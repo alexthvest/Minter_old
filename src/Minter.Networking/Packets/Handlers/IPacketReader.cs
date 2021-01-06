@@ -1,6 +1,7 @@
+using Minter.Networking.Packets;
 using Minter.Networking.Protocol;
 
-namespace Minter.Networking.Packets.Handlers
+namespace Minter.Networking.Handlers
 {
     public interface IPacketReader
     {
@@ -13,7 +14,7 @@ namespace Minter.Networking.Packets.Handlers
     }
 
     public interface IPacketReader<T> : IPacketReader
-        where T : IPacket<T>
+        where T : IPacket
     {
         /// <summary>
         /// Reads packet and returns it

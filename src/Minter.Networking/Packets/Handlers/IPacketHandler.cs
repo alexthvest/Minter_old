@@ -1,4 +1,6 @@
-namespace Minter.Networking.Packets.Handlers
+using Minter.Networking.Packets;
+
+namespace Minter.Networking.Handlers
 {
     public interface IPacketHandler
     {
@@ -11,7 +13,7 @@ namespace Minter.Networking.Packets.Handlers
     }
     
     public interface IPacketHandler<T> : IPacketHandler
-        where T : IPacket<T>
+        where T : IPacket
     {
         /// <summary>
         /// Handles packet
