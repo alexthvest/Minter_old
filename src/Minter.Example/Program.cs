@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using Minter.Hosting;
 
 namespace Minter.Example
 {
@@ -6,7 +7,13 @@ namespace Minter.Example
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("Hello Minter!");
+            CreateBuilder(args).Build().Run();
+        }
+        
+        private static IHostBuilder CreateBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder()
+                .ConfigureMinterDefaults();
         }
     }
 }
