@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Minter.Hosting;
 
 namespace Minter.Example
 {

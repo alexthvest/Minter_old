@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minter.Example", "Minter.Ex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minter.Networking", "Minter.Networking\Minter.Networking.csproj", "{15DBE2FE-A73A-4CAC-9CB6-347E043E9F7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minter.Hosting", "Minter.Hosting\Minter.Hosting.csproj", "{D911B058-525A-4758-B839-861E6EA8418D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minter", "Minter\Minter.csproj", "{D911B058-525A-4758-B839-861E6EA8418D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
