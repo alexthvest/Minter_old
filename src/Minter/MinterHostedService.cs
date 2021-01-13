@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Minter
 {
-    public class ServerHostedService : IHostedService
+    public class MinterHostedService : IHostedService
     {
-        private readonly ILogger<ServerHostedService> _logger;
+        private readonly ILogger<MinterHostedService> _logger;
 
-        public ServerHostedService(ILogger<ServerHostedService> logger)
+        public MinterHostedService(ILogger<MinterHostedService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

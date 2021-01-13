@@ -1,18 +1,10 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace Minter.Example
+﻿namespace Minter.Example
 {
     internal class Program
     {
         private static void Main(string[] args)
         {
-            CreateBuilder(args).Build().Run();
-        }
-        
-        private static IHostBuilder CreateBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder()
-                .ConfigureMinterDefaults();
+            MinterHost.ConfigureAndRun();
         }
     }
 }
